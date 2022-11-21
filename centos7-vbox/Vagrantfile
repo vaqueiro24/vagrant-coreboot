@@ -1,0 +1,24 @@
+ # -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+
+  config.vm.box = "centos/7"
+
+  config.vm.provider "virtualbox" do |vb|
+#     vb.gui = true
+     vb.name = "VAGRANT-CentOS7"
+     vb.cpus = "4"
+     vb.memory = "4096"
+  end
+  config.vm.provision "shell", inline: <<-SHELL
+
+    sudo yum check-update
+    sudo yum update -y
+    sudo yum groupinstall 'Development Tools'
+    sudo yum install -y python bison curl flex git gnat ncurses ncurses-devel m4 zlib zlib-devel
+    #git clone https://review.coreboot.org/coreboot /source/coreboot
+  SHELL
+  config.vm.synced_folder "./source", "/source" 
+end
+ 

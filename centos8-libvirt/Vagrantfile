@@ -1,0 +1,27 @@
+ # -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'libvirt'
+
+Vagrant.configure(2) do |config|
+
+  config.vm.box = "centos/8"
+
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.cpus = 4
+    libvirt.memory = 4096
+    libvirt.memorybacking :access, :mode => "shared"
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo dnf check-update
+    sudo dnf update -y
+    sudo dnf install epel-release -y
+    sudo dnf groupinstall 'Development Tools' -y
+    sudo dnf install python39 bison curl flex git gcc-gnat ncurses ncurses-devel m4 zlib zlib-devel -y
+    sudo dnf install autoconf autopoint freetype -y
+    #git clone https://review.coreboot.org/coreboot /source/coreboot
+  SHELL
+  config.vm.synced_folder "./source", "/source", type: "virtiofs"
+end
+ 
